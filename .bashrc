@@ -7,7 +7,7 @@ PROMPT_COMMAND='__lastexit__=$?; PS1="\n┏━━($(date +%I:%M:%S))━━($__la
 ssh_status_indicator() {
 	# check if in ssh
 	if [ -n "$SSH_CONNECTION" ]; then
-		echo -e "[\e[35mssh\e[0m]"
+		echo -e "[\033[35mssh\033[0m]"
 	fi
 }
 
@@ -26,20 +26,27 @@ git_status_indicator() {
 	git status --porcelain | grep --quiet '^??'
 	__unstaged__=$? # 1 if no, 0 if yes
 
+	# check if there are any changes in commited files
+	git diff --quiet
+	__changes__=$? # 0 if no, 1 if yes
+
 	__prompt__=""
 
 	# print with color (wow!)
-	if [ $__staged__ -eq 0 ]; then
+	if [ $__staged__ -eq 0 ] && [ $__changes__ -eq 0 ]; then
 		# clean - green
-		__prompt__+="[\e[32m$__branch__\e[0m"
+		__prompt__+="[\033[32m$__branch__\033[0m"
+	elif [ $__changes__ -eq 1 ]; then
+		# dirty - red
+		__prompt__+="[\033[31m$__branch__\033[0m"
 	else
-		# dirty - yellow
-		__prompt__+="[\e[33m$__branch__\e[0m"
+		# staging area happy fun yay
+		__prompt__+="[\033[33m$__branch__\033[0m"
 	fi
 
 	if [ $__unstaged__ -eq 0 ]; then
 		# untracked files
-		__prompt__+="\e[31m*\e[0m"
+		__prompt__+="\033[31m*\033[0m"
 	fi
 
 	echo -e "$__prompt__]"
