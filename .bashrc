@@ -2,7 +2,15 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
-PROMPT_COMMAND='__lastexit__=$?; PS1="\n┏━━($(date +%I:%M))━━($__lastexit__)━┓\n\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] $(ssh_status_indicator)$(git_status_indicator)\$ "'
+PROMPT_COMMAND='__lastexit__=$?; PS1="\n┏━━(\[\033[36m\]$(date +%I:%M)\[\033[0m\])━━($(exit_status_indicator))━┓\n\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] $(ssh_status_indicator)$(git_status_indicator)\$ "'
+
+exit_status_indicator() {
+	if [ ${__lastexit__} -eq 0 ]; then
+		echo -e "\[\033[32m\]0\[\033[0m\]"
+	else
+		echo -e "\[\033[31m\]${__lastexit__}\[\033[0m\]"
+	fi
+}
 
 ssh_status_indicator() {
 	# check if in ssh
