@@ -2,12 +2,12 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
-PROMPT_COMMAND='__lastexit__=$?; PS1="\n┏━━($(date +%I:%M:%S))━━($__lastexit__)━┓\n\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] $(ssh_status_indicator)$(git_status_indicator)\$ "'
+PROMPT_COMMAND='__lastexit__=$?; PS1="\n┏━━($(date +%I:%M))━━($__lastexit__)━┓\n\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] $(ssh_status_indicator)$(git_status_indicator)\$ "'
 
 ssh_status_indicator() {
 	# check if in ssh
 	if [ -n "$SSH_CONNECTION" ]; then
-		echo -e "[\033[35mssh\033[0m]"
+		echo -e "[\[\033[35m\]ssh\[\033[0m\]]"
 	fi
 }
 
@@ -35,22 +35,26 @@ git_status_indicator() {
 	# print with color (wow!)
 	if [ $__staged__ -eq 0 ] && [ $__changes__ -eq 0 ]; then
 		# clean - green
-		__prompt__+="[\033[32m$__branch__\033[0m"
+		__prompt__+="[\[\033[32m\]$__branch__\[\033[0m\]"
 	elif [ $__changes__ -eq 1 ]; then
 		# dirty - red
-		__prompt__+="[\033[31m$__branch__\033[0m"
+		__prompt__+="[\[\033[31m\]$__branch__\[\033[0m\]"
 	else
 		# staging area happy fun yay
-		__prompt__+="[\033[33m$__branch__\033[0m"
+		__prompt__+="[\[\033[33m\]$__branch__\[\033[0m\]"
 	fi
 
 	if [ $__unstaged__ -eq 0 ]; then
 		# untracked files
-		__prompt__+="\033[31m*\033[0m"
+		__prompt__+="\[\033[31m\]*\[\033[0m\]"
 	fi
 
 	echo -e "$__prompt__]"
 }
+
+# Shortcuts to Windows directories
+downloads="/mnt/c/users/abbas/downloads"
+documents="/mnt/c/users/abbas/documents"
 
 
 # If not running interactively, don't do anything
